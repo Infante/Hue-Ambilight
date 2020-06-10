@@ -2,8 +2,9 @@
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit
 from utils import utils
-import json
+import json, os
 
+cwd = os.getcwd()
 utilities = utils.Utils()
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -11,7 +12,7 @@ socketio = SocketIO(app)
 # GET route for main HTML page so user can edit his settings
 @app.route("/")
 def index():
-    with open("config.json", "r") as f:
+    with open(f"{cwd}/config.json", "r") as f:
       config = json.load(f)
     return render_template('index.html', config=config)
 
@@ -22,12 +23,12 @@ def config():
         ip = request.form.get("ip")
         light = request.form.get("light")
         # Get current config
-        with open("config.json", "r") as f:
+        with open(f"{cwd}/config.json", "r") as f:
           config = json.load(f)
           config["ip"] = ip
           config["light"] = light
           # Update json
-          utilities.write_json("config.json", config)
+          utilities.write_json(f"{cwd}/config.json", config)
           # Return HTML
           return render_template('index.html', config=config)
     except Exception as e:

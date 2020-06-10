@@ -1,5 +1,5 @@
 # Import modules
-import time, json, threading
+import time, json, threading, os
 import numpy as np
 import cv2 as cv
 from phue import Bridge
@@ -7,6 +7,7 @@ from utils import utils
 from app import emit_socket, start_server
 from sklearn.cluster import KMeans
 
+cwd = os.getcwd()
 started = False
 
 # Intialize utilities
@@ -38,10 +39,9 @@ def listen_video(device, lights):
     while capture.isOpened():
         try:
             # Get config + setup HUE client
-            with open("config.json", "r") as f:
+            with open(f"{cwd}/config.json", "r") as f:
               config = json.load(f)
             time.sleep(.1)
-            print(config["light"])
             # Select light based off user inputted light (defaults at 11)
             for light in lights:
                 if light == int(config["light"]):
@@ -71,7 +71,6 @@ def listen_video(device, lights):
                 print("User lights off")
                 emit_socket("User lights off")
         except Exception as e:
-            print(e)
             if ret == False:
                 break
             else:
@@ -90,7 +89,7 @@ def listen_video(device, lights):
 def main():
     global started
     # Get config + setup HUE client
-    with open("config.json", "r") as f:
+    with open(f"{cwd}/config.json", "r") as f:
       config = json.load(f)
     # Get users config for his HUE
     ip = config['ip']
@@ -119,7 +118,7 @@ def main():
     for light in lights:
         lights_object.append({"name": lights[light].name, "id": light})
     config["lights"] = lights_object
-    utilities.write_json("config.json", config)
+    utilities.write_json(f"{cwd}/config.json", config)
     # Stop this loop when a video capture starts up
     while started == False:
         try:
