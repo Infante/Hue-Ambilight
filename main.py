@@ -30,15 +30,23 @@ def get_inputs():
         print(f"Error getting input devices: {e}")
 
 # Listens to video streaming data (main function)
-def listen_video(device, light, config):
-    # Update config here as well incase user updated setup ??
+def listen_video(device, lights):
     global started
     # Start watching video
     capture = cv.VideoCapture(device)
     # While the video is being streamed
     while capture.isOpened():
         try:
+            # Get config + setup HUE client
+            with open("config.json", "r") as f:
+              config = json.load(f)
             time.sleep(.1)
+            print(config["light"])
+            # Select light based off user inputted light (defaults at 11)
+            for light in lights:
+                if light == int(config["light"]):
+                    light = lights[light]
+                    break
             if light.on == True:
                 # Captures each frame
                 ret, frame = capture.read()
@@ -63,6 +71,7 @@ def listen_video(device, light, config):
                 print("User lights off")
                 emit_socket("User lights off")
         except Exception as e:
+            print(e)
             if ret == False:
                 break
             else:
@@ -107,11 +116,7 @@ def main():
     # Update lights available and define the hue light
     lights = hue.get_light_objects('id')
     lights_object = []
-    hue_light = ""
     for light in lights:
-        # Select light based off user inputted light (defaults at 11)
-        if light == config["light"]:
-            hue_light = lights[light]
         lights_object.append({"name": lights[light].name, "id": light})
     config["lights"] = lights_object
     utilities.write_json("config.json", config)
@@ -125,7 +130,7 @@ def main():
             if len(inputs) > 0:
                 # Start watching video / input
                 started = True
-                listen_video(0, hue_light, config)
+                listen_video(0, lights)
                 break
             else:
                 print("No input available")

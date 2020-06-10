@@ -51,7 +51,7 @@
       <div class="form-row">
         <div class="form-group col-md-12">
           <label>Active Light</label>
-          <select required name="light" id="light" class="form-control">
+          <select name="light" id="light" class="form-control">
             <option selected disabled>Choose a light...</option>
           </select>
         </div>
@@ -95,7 +95,7 @@
       }
       document.getElementById("light").value = light;
       // Setup socket connection for logs
-      var socket = io.connect("http://localhost:5000");
+      var socket = io.connect(`${window.location.hostname}:5000`);
       socket.on("log", (log) => {
         var previousLogs = document.getElementById("logs").innerHTML;
         document.getElementById("logs").innerHTML = `${previousLogs}\n${log}`;
