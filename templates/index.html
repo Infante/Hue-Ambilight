@@ -47,18 +47,18 @@
   <div class="container">
     <h1>Ambilight Controller</h1>
 
-    <form>
+    <form action="/config" method="POST" name="myForm">>
       <div class="form-row">
         <div class="form-group col-md-12">
           <label>Active Light</label>
-          <select id="light" class="form-control">
+          <select required name="light" id="light" class="form-control">
             <option selected disabled>Choose a light...</option>
           </select>
         </div>
       </div>
       <div class="form-group">
         <label>HUE Bridge IP</label>
-        <input id="ip" type="text" class="form-control" placeholder="0.0.0.0">
+        <input required name="ip" id="ip" type="text" class="form-control" placeholder="0.0.0.0">
       </div>
       <a href="https://discovery.meethue.com/">Discover my HUE bridge IP</a>
       <br>
